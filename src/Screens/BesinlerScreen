@@ -1,0 +1,44 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+
+const BesinlerScreen = () => {
+  const [besinler, setBesinler] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await firestore().collection('besinler').get();
+      const fetchedBesinler = [];
+
+      querySnapshot.forEach((documentSnapshot) => {
+        const data = documentSnapshot.data();
+        fetchedBesinler.push(data);
+      });
+
+      setBesinler(fetchedBesinler);
+    };
+
+    fetchData();
+  }, []);
+
+  const renderItem = ({ item }) => {
+    return (
+      <View>
+        <Text>{item.name}</Text>
+        {/* Diğer öğeleri burada gösterebilirsiniz */}
+      </View>
+    );
+  };
+
+  return (
+    <View>
+      <FlatList
+        data={besinler}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
+    </View>
+  );
+};
+
+export default BesinlerScreen;
